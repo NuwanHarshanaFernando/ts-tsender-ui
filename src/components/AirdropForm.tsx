@@ -1,7 +1,7 @@
 "use client"
 
 import InputField from "@/components/ui/InputField";
-import {useState, useMemo, use} from 'react';
+import { useState, useMemo, use } from 'react';
 import { chainsToTSender, tsenderAbi, erc20Abi } from "@/constants";
 import { useChainId, useConfig, useAccount, useWriteContract } from "wagmi";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
@@ -15,8 +15,8 @@ export default function AirdropForm() {
     const chainId = useChainId();
     const config = useConfig();
     const account = useAccount();
-    const total: number = useMemo(() => calculateTotal(amounts), [amounts]);     
-    const {data: hash, isPending, writeContractAsync} =  useWriteContract()
+    const total: number = useMemo(() => calculateTotal(amounts), [amounts]);
+    const { data: hash, isPending, writeContractAsync } = useWriteContract()
 
     async function getApprovedAmount(tSenderAddress: string | null): Promise<number> {
         if (!tSenderAddress) {
@@ -32,12 +32,12 @@ export default function AirdropForm() {
         })
         // token.allowance(account, tsender)
 
-        
+
         return response as number;
     }
 
     async function handleSubmit() {
-        
+
         // 1a. If already approved, move to step 2
         // 1b. Approve our tsender contract to send our tokens
         // 2. Call the airdrop function on the tsender contract 
@@ -46,7 +46,7 @@ export default function AirdropForm() {
         const approvedAmount = await getApprovedAmount(tSenderAddress);
         console.log("Approved Amount:", approvedAmount);
 
-        if(approvedAmount < total){
+        if (approvedAmount < total) {
             const approvalHash = await writeContractAsync({
                 abi: erc20Abi,
                 address: tokenAddress as `0x${string}`,
@@ -54,10 +54,10 @@ export default function AirdropForm() {
                 args: [tSenderAddress as `0x${string}`, BigInt(total)],
             });
 
-            const approvalReceipt = await waitForTransactionReceipt(config,{hash:approvalHash})
+            const approvalReceipt = await waitForTransactionReceipt(config, { hash: approvalHash })
             console.log("Approval Confirmed", approvalReceipt)
 
-              await writeContractAsync({
+            await writeContractAsync({
                 abi: tsenderAbi,
                 address: tSenderAddress as `0x${string}`,
                 functionName: "airdropERC20",
@@ -70,7 +70,7 @@ export default function AirdropForm() {
                 ],
             })
 
-        } else{
+        } else {
             await writeContractAsync({
                 abi: tsenderAbi,
                 address: tSenderAddress as `0x${string}`,
@@ -94,7 +94,7 @@ export default function AirdropForm() {
                 value={tokenAddress}
                 onChange={(e) => setTokenAddress(e.target.value)}
             />
-             <InputField
+            <InputField
                 label="Recipients"
                 placeholder="0x123456, 0x789012"
                 value={recipients}
