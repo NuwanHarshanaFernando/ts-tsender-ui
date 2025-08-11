@@ -115,3 +115,12 @@ Amounts -> 10^18
 Then Send Tokens
 
 Import Token into Account 6, Now we can see Mock Tokens in Account 6
+
+Install @radix-ui/react-tabs
+
+```
+ yarn add @radix-ui/react-tabs
+```
+Then,
+Open the command palette (Ctrl+Shift+P)
+Run "TypeScript: Restart TS server"
